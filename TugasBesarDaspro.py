@@ -167,6 +167,41 @@ def proses_catat_peminjaman(id_k, nama_p, durasi):
 # CATATAN: Fungsi proses_pengembalian, hitung_statistik, dan isi_data_dummy 
 # dihapus
 
+# ============================================================
+# MENU 5 : CARI KENDARAAN
+# ============================================================
+
+def cari_kendaraan(keyword):
+    ditemukan = False
+
+    print("\nHASIL PENCARIAN")
+    cetak_garis()
+
+    for i in range(len(kendaraan_id)):
+        if (keyword.lower() in kendaraan_nama[i].lower() or
+            keyword.lower() in kendaraan_plat[i].lower() or
+            keyword.lower() in kendaraan_jenis[i].lower()):
+
+            print(
+                format_id_k(kendaraan_id[i]),
+                "|",
+                kendaraan_nama[i],
+                "|",
+                kendaraan_jenis[i],
+                "|",
+                kendaraan_plat[i],
+                "|",
+                format_rupiah(kendaraan_harga[i]),
+                "|",
+                kendaraan_status[i]
+            )
+
+            ditemukan = True
+
+    if not ditemukan:
+        print("Data kendaraan tidak ditemukan.")
+
+    cetak_garis()
 
 # ============================================================
 #           VALIDATOR INPUT SIMPEL (DIPAKAI DI MAIN)
@@ -321,6 +356,13 @@ def main():
                     print("[i] Transaksi dibatalkan.")
             else:
                 print("[x] ID Kendaraan salah atau sedang dipinjam.")
+
+        # --------------------------------------------------------
+        # MENU 5: CARI KENDARAAN
+        # --------------------------------------------------------
+        elif pilihan == "5":
+            keyword = input_teks("Masukkan nama/plat/jenis kendaraan: ")
+            cari_kendaraan(keyword)
 
         # --------------------------------------------------------
         # (Belum Ada Fitur)
