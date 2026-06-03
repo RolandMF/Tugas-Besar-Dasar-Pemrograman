@@ -3,7 +3,7 @@
 #        Mata Kuliah : Dasar Pemrograman
 #        Kelompok    : -Steven Theodor ( 2572015 )
 #                      -Roland Michael Febrian ( 2572017 )
-#                      -Gabriele Sebastien De Fretes ( 2572054 )
+#                      -Gabriel Sebastian de Fretes ( 2572054 )
 # ============================================================
 
 # ============================================================
@@ -61,7 +61,7 @@ def cari_index_kendaraan(id_cari):
 
 def format_id_k(id_num): return "K" + str(id_num).zfill(3)
 
-# CATATAN: Fungsi cari_index_peminjaman dan format_id_p dihapus 
+# CATATAN: Fungsi cari_index_peminjaman dan format_id_k dihapus 
 # karena hanya dipakai Menu 3 & 4 
 
 
@@ -163,6 +163,73 @@ def proses_catat_peminjaman(id_k, nama_p, durasi):
     
     counter_pinjam[0] += 1
     return True, "Peminjaman berhasil dicatat.", total
+
+# --- LOGIKA MENU 3 & 4 ---
+def format_id_p(id_num):
+    return "K" + str(id_num).zfill(3)
+
+
+def cari_index_peminjaman(id_cari):
+    """Mengembalikan index peminjaman berdasarkan pinjam_id."""
+    for i in range(len(pinjam_id)):
+        if pinjam_id[i] == id_cari:
+            return i
+    return -1
+
+
+def proses_pengembalian(pinjam_idx):
+    if pinjam_idx < 0 or pinjam_idx >= len(pinjam_id):
+        return False, "Transaksi tidak ditemukan."
+    if pinjam_status[pinjam_idx] != "Aktif":
+        return False, "Transaksi ini sudah selesai."
+
+    kendaraan_idx = cari_index_kendaraan(pinjam_id_kendaraan[pinjam_idx])
+    if kendaraan_idx == -1:
+        return False, "Data kendaraan tidak valid."
+
+    pinjam_status[pinjam_idx] = "Selesai"
+    kendaraan_status[kendaraan_idx] = "Tersedia"
+    return True, "Pengembalian berhasil diproses."
+
+
+def tampilkan_tabel_peminjaman(filter_status="semua"):
+    print("\n--- RIWAYAT PEMINJAMAN ---")
+    found = False
+    print("ID   | ID Kendaraan | Nama Peminjam    | Hari | Total        | Status")
+    cetak_garis()
+    for i in range(len(pinjam_id)):
+        if filter_status == "semua" or pinjam_status[i] == filter_status:
+            txt_id = format_id_p(pinjam_id[i])
+            txt_id_k = format_id_k(pinjam_id_kendaraan[i])
+            txt_nama = pinjam_nama[i].ljust(16)
+            txt_hari = str(pinjam_hari[i]).rjust(4)
+            txt_total = format_rupiah(pinjam_total[i]).rjust(12)
+            print(f"{txt_id} | {txt_id_k}       | {txt_nama} | {txt_hari} | {txt_total} | {pinjam_status[i]}")
+            found = True
+    if not found:
+        print(" (Tidak ada data)")
+    cetak_garis()
+
+
+def hitung_statistik():
+    total_kendaraan = len(kendaraan_id)
+    tersedia = kendaraan_status.count("Tersedia")
+    dipinjam = kendaraan_status.count("Dipinjam")
+    total_transaksi = len(pinjam_id)
+    aktif = pinjam_status.count("Aktif")
+    selesai = pinjam_status.count("Selesai")
+    pendapatan = sum(pinjam_total[i] for i in range(len(pinjam_id)) if pinjam_status[i] == "Selesai")
+
+    print("\n--- LAPORAN STATISTIK ---")
+    print(f"Jumlah Kendaraan       : {total_kendaraan}")
+    print(f"  Tersedia             : {tersedia}")
+    print(f"  Sedang Dipinjam      : {dipinjam}")
+    print(f"Jumlah Transaksi       : {total_transaksi}")
+    print(f"  Aktif                : {aktif}")
+    print(f"  Selesai              : {selesai}")
+    print(f"Pendapatan Tuntas      : {format_rupiah(pendapatan)}")
+    cetak_garis()
+
 
 # CATATAN: Fungsi proses_pengembalian, hitung_statistik, dan isi_data_dummy 
 # dihapus
@@ -357,17 +424,42 @@ def main():
             else:
                 print("[x] ID Kendaraan salah atau sedang dipinjam.")
 
+
+        # --------------------------------------------------------
+        # MENU 3: PENGEMBALIAN KENDARAAN
+        # --------------------------------------------------------
+        elif pilihan == "3":
+            print("\n[TRANSAKSI PENGEMBALIAN]")
+            aktif_indices = [i for i in range(len(pinjam_id)) if pinjam_status[i] == "Aktif"]
+            if not aktif_indices:
+                print("[!] Tidak ada peminjaman aktif saat ini.")
+                continue
+
+            for nomor, idx in enumerate(aktif_indices, start=1):
+                print(f"{nomor}. {format_id_p(pinjam_id[idx])} | {pinjam_nama[idx]} | {format_id_k(pinjam_id_kendaraan[idx])} | {pinjam_hari[idx]} hari | {format_rupiah(pinjam_total[idx])}")
+
+            pilihan_kembali = input_angka("Pilih nomor transaksi yang akan dikembalikan: K")
+            if 1 <= pilihan_kembali <= len(aktif_indices):
+                idx = aktif_indices[pilihan_kembali - 1]
+                sukses, pesan = proses_pengembalian(idx)
+                if sukses:
+                    print(f"[v] {pesan}")
+                else:
+                    print(f"[x] {pesan}")
+            else:
+                print("[!] Pilihan tidak valid.")
+
         # --------------------------------------------------------
         # MENU 5: CARI KENDARAAN
         # --------------------------------------------------------
         elif pilihan == "5":
             keyword = input_teks("Masukkan nama/plat/jenis kendaraan: ")
             cari_kendaraan(keyword)
-
+        
         # --------------------------------------------------------
         # (Belum Ada Fitur)
         # --------------------------------------------------------
-        elif pilihan in ["3", "4", "5"]:
+        elif pilihan in ["4"]:
             print("\n[!] Maaf, masih belum ada fiturnya.")
 
         elif pilihan == "0":
