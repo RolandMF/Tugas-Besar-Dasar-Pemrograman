@@ -123,36 +123,36 @@ def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
 
 
 def cari_kendaraan(keyword):
-    LEBAR = 70
-    print()
-    garis("=", LEBAR)
-    print(f"  HASIL PENCARIAN UNTUK: '{keyword}'")
-    garis("-", LEBAR)
-    print(f"  {'ID':<6}  {'Nama':<20}  {'Jenis':<7}  {'Plat':<12}  {'Harga/Hari':>13}   Status")
-    garis("-", LEBAR)
+    ditemukan = False
 
-    ada_data = False
-    keyword_lower = keyword.lower()
+    print("\nHASIL PENCARIAN")
+    cetak_garis()
 
     for i in range(len(kendaraan_id)):
-        if (keyword_lower in kendaraan_nama[i].lower() or 
-            keyword_lower in kendaraan_plat[i].lower() or 
-            keyword_lower in kendaraan_jenis[i].lower()):
-            
-            id_str     = format_id_k(kendaraan_id[i])
-            nama_str   = kendaraan_nama[i]
-            jenis_str  = kendaraan_jenis[i]
-            plat_str   = kendaraan_plat[i]
-            harga_str  = format_rupiah(kendaraan_harga[i])
-            status_str = kendaraan_status[i]
-            tanda      = "[v]" if status_str == "Tersedia" else "[-]"
+        if (keyword in kendaraan_nama[i] or
+            keyword in kendaraan_plat[i] or
+            keyword in kendaraan_jenis[i]):
 
-            print(f"  {id_str:<6}  {nama_str:<20}  {jenis_str:<7}  {plat_str:<12}  {harga_str:>13}  {tanda} {status_str}")
-            ada_data = True
+            print(
+                format_id_k(kendaraan_id[i]),
+                "|",
+                kendaraan_nama[i],
+                "|",
+                kendaraan_jenis[i],
+                "|",
+                kendaraan_plat[i],
+                "|",
+                format_rupiah(kendaraan_harga[i]),
+                "|",
+                kendaraan_status[i]
+            )
 
-    if not ada_data:
-        print(f"  (Tidak ada kendaraan yang cocok dengan kata kunci '{keyword}')")
-    garis("=", LEBAR)
+            ditemukan = True
+
+    if ditemukan == False:
+        print("Data kendaraan tidak ditemukan.")
+
+    cetak_garis()
 
 
 # ============================================================
