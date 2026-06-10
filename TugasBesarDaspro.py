@@ -62,18 +62,74 @@ def cari_idx_kendaraan(id_cari):
     return -1
 
 def input_angka(pesan):
-    while True:
-        try:
-            return int(input(pesan))
-        except ValueError:
-            print("  [!] Masukkan angka bulat yang valid.")
+    selesai = False
+    while not selesai:
+        teks = hapus_spasi(input(pesan))
+        if teks != "":
+            angka_benar = True
+            for karakter in teks:
+                if karakter < '0' or karakter > '9':
+                    angka_benar = False
+
+            if angka_benar:
+                return int(teks)
+
+        print("  [!] Masukkan angka bulat yang valid.")
+
+def hapus_spasi(teks):
+    awal = 0
+    while awal < len(teks) and teks[awal] in " \t\n\r":
+        awal += 1
+
+    akhir = len(teks) - 1
+    while akhir >= awal and teks[akhir] in " \t\n\r":
+        akhir -= 1
+
+    return teks[awal:akhir + 1]
+
 
 def input_teks(pesan):
     while True:
-        val = input(pesan).strip()
+        val = hapus_spasi(input(pesan))
         if val:
             return val
         print("  [!] Input tidak boleh kosong.")
+
+
+def beri_spasi_kanan(teks, lebar):
+    hasil = teks
+    while len(hasil) < lebar:
+        hasil = hasil + " "
+    return hasil
+
+
+def ubah_ke_besar(teks):
+    tabel = {
+        'a': 'A', 'b': 'B', 'c': 'C', 'd': 'D', 'e': 'E',
+        'f': 'F', 'g': 'G', 'h': 'H', 'i': 'I', 'j': 'J',
+        'k': 'K', 'l': 'L', 'm': 'M', 'n': 'N', 'o': 'O',
+        'p': 'P', 'q': 'Q', 'r': 'R', 's': 'S', 't': 'T',
+        'u': 'U', 'v': 'V', 'w': 'W', 'x': 'X', 'y': 'Y', 'z': 'Z'
+    }
+    hasil = ""
+    for huruf in teks:
+        hasil += tabel.get(huruf, huruf)
+    return hasil
+
+
+def ubah_ke_kecil(teks):
+    tabel = {
+        'A': 'a', 'B': 'b', 'C': 'c', 'D': 'd', 'E': 'e',
+        'F': 'f', 'G': 'g', 'H': 'h', 'I': 'i', 'J': 'j',
+        'K': 'k', 'L': 'l', 'M': 'm', 'N': 'n', 'O': 'o',
+        'P': 'p', 'Q': 'q', 'R': 'r', 'S': 's', 'T': 't',
+        'U': 'u', 'V': 'v', 'W': 'w', 'X': 'x', 'Y': 'y', 'Z': 'z'
+    }
+    hasil = ""
+    for huruf in teks:
+        hasil += tabel.get(huruf, huruf)
+    return hasil
+
 
 def tekan_enter():
     input("\n  [ Tekan ENTER untuk lanjut... ]")
@@ -86,35 +142,37 @@ def tekan_enter():
 def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
     judul = "SEMUA KENDARAAN"
     if filter_status != "semua":
-        judul = f"KENDARAAN — {filter_status.upper()}"
+        judul = f"KENDARAAN — {ubah_ke_besar(filter_status)}"
     if filter_jenis:
-        judul += f" | JENIS: {filter_jenis.upper()}"
+        judul += f" | JENIS: {ubah_ke_besar(filter_jenis)}"
 
     LEBAR = 70
     print()
     garis("=", LEBAR)
     print(f"  {judul}")
     garis("-", LEBAR)
-    print(f"  {'ID':<6}  {'Nama':<20}  {'Jenis':<7}  {'Plat':<12}  {'Harga/Hari':>13}   Status")
+    print("  " + beri_spasi_kanan("ID", 6) + "  " + beri_spasi_kanan("Nama", 20) + "  " + beri_spasi_kanan("Jenis", 7) + "  " + beri_spasi_kanan("Plat", 12) + "  " + "Harga/Hari".rjust(13) + "   Status")
     garis("-", LEBAR)
 
     ada_data = False
     for i in range(len(kendaraan_id)):
-        if filter_status != "semua" and kendaraan_status[i] != filter_status:
-            continue
-        if filter_jenis and kendaraan_jenis[i].lower() != filter_jenis.lower():
-            continue
+        cocok_status = filter_status == "semua" or kendaraan_status[i] == filter_status
+        cocok_jenis = not filter_jenis or ubah_ke_kecil(kendaraan_jenis[i]) == ubah_ke_kecil(filter_jenis)
 
-        id_str     = format_id_k(kendaraan_id[i])
-        nama_str   = kendaraan_nama[i]
-        jenis_str  = kendaraan_jenis[i]
-        plat_str   = kendaraan_plat[i]
-        harga_str  = format_rupiah(kendaraan_harga[i])
-        status_str = kendaraan_status[i]
-        tanda      = "[v]" if status_str == "Tersedia" else "[-]"
+        if cocok_status and cocok_jenis:
+            id_str     = format_id_k(kendaraan_id[i])
+            nama_str   = kendaraan_nama[i]
+            jenis_str  = kendaraan_jenis[i]
+            plat_str   = kendaraan_plat[i]
+            harga_str  = format_rupiah(kendaraan_harga[i])
+            status_str = kendaraan_status[i]
+            if status_str == "Tersedia":
+                tanda = "[v]"
+            else:
+                tanda = "[-]"
 
-        print(f"  {id_str:<6}  {nama_str:<20}  {jenis_str:<7}  {plat_str:<12}  {harga_str:>13}  {tanda} {status_str}")
-        ada_data = True
+            print("  " + beri_spasi_kanan(id_str, 6) + "  " + beri_spasi_kanan(nama_str, 20) + "  " + beri_spasi_kanan(jenis_str, 7) + "  " + beri_spasi_kanan(plat_str, 12) + "  " + harga_str.rjust(13) + "  " + tanda + " " + status_str)
+            ada_data = True
 
     if not ada_data:
         print("  (Tidak ada data yang sesuai.)")
@@ -128,16 +186,16 @@ def cari_kendaraan(keyword):
     garis("=", LEBAR)
     print(f"  HASIL PENCARIAN UNTUK: '{keyword}'")
     garis("-", LEBAR)
-    print(f"  {'ID':<6}  {'Nama':<20}  {'Jenis':<7}  {'Plat':<12}  {'Harga/Hari':>13}   Status")
+    print("  " + beri_spasi_kanan("ID", 6) + "  " + beri_spasi_kanan("Nama", 20) + "  " + beri_spasi_kanan("Jenis", 7) + "  " + beri_spasi_kanan("Plat", 12) + "  " + "Harga/Hari".rjust(13) + "   Status")
     garis("-", LEBAR)
 
     ada_data = False
-    keyword_lower = keyword.lower()
+    keyword_lower = ubah_ke_kecil(keyword)
 
     for i in range(len(kendaraan_id)):
-        if (keyword_lower in kendaraan_nama[i].lower() or 
-            keyword_lower in kendaraan_plat[i].lower() or 
-            keyword_lower in kendaraan_jenis[i].lower()):
+        if (keyword_lower in ubah_ke_kecil(kendaraan_nama[i]) or 
+            keyword_lower in ubah_ke_kecil(kendaraan_plat[i]) or 
+            keyword_lower in ubah_ke_kecil(kendaraan_jenis[i])):
             
             id_str     = format_id_k(kendaraan_id[i])
             nama_str   = kendaraan_nama[i]
@@ -145,9 +203,12 @@ def cari_kendaraan(keyword):
             plat_str   = kendaraan_plat[i]
             harga_str  = format_rupiah(kendaraan_harga[i])
             status_str = kendaraan_status[i]
-            tanda      = "[v]" if status_str == "Tersedia" else "[-]"
+            if status_str == "Tersedia":
+                tanda = "[v]"
+            else:
+                tanda = "[-]"
 
-            print(f"  {id_str:<6}  {nama_str:<20}  {jenis_str:<7}  {plat_str:<12}  {harga_str:>13}  {tanda} {status_str}")
+            print("  " + beri_spasi_kanan(id_str, 6) + "  " + beri_spasi_kanan(nama_str, 20) + "  " + beri_spasi_kanan(jenis_str, 7) + "  " + beri_spasi_kanan(plat_str, 12) + "  " + harga_str.rjust(13) + "  " + tanda + " " + status_str)
             ada_data = True
 
     if not ada_data:
@@ -160,15 +221,16 @@ def cari_kendaraan(keyword):
 # ============================================================
 
 def proses_tambah_kendaraan(nama, jenis, plat, harga):
+    global kendaraan_id, kendaraan_nama, kendaraan_jenis, kendaraan_plat, kendaraan_harga, kendaraan_status, counter_kendaraan
     for p in kendaraan_plat:
-        if p.upper() == plat.upper():
+        if p == plat:
             return False, "Nomor plat sudah terdaftar."
-    kendaraan_id.append(counter_kendaraan[0])
-    kendaraan_nama.append(nama)
-    kendaraan_jenis.append(jenis)
-    kendaraan_plat.append(plat.upper())
-    kendaraan_harga.append(harga)
-    kendaraan_status.append("Tersedia")
+    kendaraan_id = kendaraan_id + [counter_kendaraan[0]]
+    kendaraan_nama = kendaraan_nama + [nama]
+    kendaraan_jenis = kendaraan_jenis + [jenis]
+    kendaraan_plat = kendaraan_plat + [plat]
+    kendaraan_harga = kendaraan_harga + [harga]
+    kendaraan_status = kendaraan_status + ["Tersedia"]
     counter_kendaraan[0] += 1
     return True, "Kendaraan berhasil ditambahkan."
 
@@ -194,18 +256,19 @@ def proses_hapus_kendaraan(id_k):
     return True, "Kendaraan berhasil dihapus."
 
 def proses_catat_peminjaman(id_k, nama_p, durasi):
+    global pinjam_id, pinjam_id_kendaraan, pinjam_nama, pinjam_hari, pinjam_total, pinjam_status, counter_pinjam
     idx_k = cari_idx_kendaraan(id_k)
     if idx_k == -1:
         return False, "ID Kendaraan tidak ditemukan.", 0
     if kendaraan_status[idx_k] != "Tersedia":
         return False, "Kendaraan tidak tersedia.", 0
     total = kendaraan_harga[idx_k] * durasi
-    pinjam_id.append(counter_pinjam[0])
-    pinjam_id_kendaraan.append(id_k)
-    pinjam_nama.append(nama_p)
-    pinjam_hari.append(durasi)
-    pinjam_total.append(total)
-    pinjam_status.append("Aktif")
+    pinjam_id = pinjam_id + [counter_pinjam[0]]
+    pinjam_id_kendaraan = pinjam_id_kendaraan + [id_k]
+    pinjam_nama = pinjam_nama + [nama_p]
+    pinjam_hari = pinjam_hari + [durasi]
+    pinjam_total = pinjam_total + [total]
+    pinjam_status = pinjam_status + ["Aktif"]
     kendaraan_status[idx_k] = "Dipinjam"
     counter_pinjam[0] += 1
     return True, "Peminjaman berhasil dicatat.", total
@@ -235,9 +298,9 @@ def tampilkan_tabel_peminjaman(filter_status="semua"):
         if filter_status == "semua" or pinjam_status[i] == filter_status:
             txt_id = format_id_p(pinjam_id[i])
             txt_id_k = format_id_k(pinjam_id_kendaraan[i])
-            txt_nama = pinjam_nama[i].ljust(16)
-            txt_hari = str(pinjam_hari[i]).rjust(4)
-            txt_total = format_rupiah(pinjam_total[i]).rjust(12)
+            txt_nama = pinjam_nama[i] + " " * (16 - len(pinjam_nama[i]))
+            txt_hari = " " * (4 - len(str(pinjam_hari[i]))) + str(pinjam_hari[i])
+            txt_total = " " * (12 - len(format_rupiah(pinjam_total[i]))) + format_rupiah(pinjam_total[i])
             print(f"{txt_id} | {txt_id_k}       | {txt_nama} | {txt_hari} | {txt_total} | {pinjam_status[i]}")
             found = True
     if not found:
@@ -259,8 +322,14 @@ def isi_data_dummy():
         ("Mitsubishi L300",  "Truk",  "D-7890-IJ", 550_000),
         ("Suzuki Carry",     "Truk",  "D-2345-KL", 450_000),
     ]
-    for nama, jenis, plat, harga in data_kendaraan:
+    indeks = 0
+    while indeks < len(data_kendaraan):
+        nama = data_kendaraan[indeks][0]
+        jenis = data_kendaraan[indeks][1]
+        plat = data_kendaraan[indeks][2]
+        harga = data_kendaraan[indeks][3]
         proses_tambah_kendaraan(nama, jenis, plat, harga)
+        indeks = indeks + 1
         
     # Tambah dummy peminjaman biar menu 3 bisa langsung dites
     proses_catat_peminjaman(1, "Budi Santoso",  3)
@@ -274,14 +343,15 @@ def isi_data_dummy():
 def pilih_jenis():
     print("  Jenis :  1) Motor   2) Mobil   3) Truk")
     while True:
-        pj = input("  >> Pilih jenis [1/2/3]: ").strip()
+        pj = hapus_spasi(input("  >> Pilih jenis [1/2/3]: "))
         if pj == "1":   return "Motor"
         elif pj == "2": return "Mobil"
         elif pj == "3": return "Truk"
         print("  [!] Pilih angka 1, 2, atau 3.")
 
 def menu_kendaraan():
-    while True:
+    selesai = False
+    while not selesai:
         print("\n")
         garis("=", 44)
         print("      MANAJEMEN DATA KENDARAAN")
@@ -297,7 +367,7 @@ def menu_kendaraan():
         print("  ─────────────────────────────────────")
         print("  0. Kembali ke Menu Utama")
         garis("-", 44)
-        sub = input("  >> Pilih: ").strip()
+        sub = hapus_spasi(input("  >> Pilih: "))
 
         if sub == "1":
             tampilkan_tabel_kendaraan()
@@ -318,7 +388,7 @@ def menu_kendaraan():
             garis("-", 44)
             nama  = input_teks("  Nama Kendaraan  : ")
             jenis = pilih_jenis()
-            plat  = input_teks("  Nomor Plat      : ").upper()
+            plat  = input_teks("  Nomor Plat      : ")
             harga = input_angka("  Harga Sewa/Hari : Rp ")
 
             garis("-", 44)
@@ -328,7 +398,7 @@ def menu_kendaraan():
             print(f"    Plat  : {plat}")
             print(f"    Harga : {format_rupiah(harga)}/hari")
             garis("-", 44)
-            konfirmasi = input("  Simpan data ini? (y/n): ").strip().lower()
+            konfirmasi = ubah_ke_kecil(hapus_spasi(input("  Simpan data ini? (y/n): ")))
 
             if konfirmasi == "y":
                 ok, msg = proses_tambah_kendaraan(nama, jenis, plat, harga)
@@ -345,21 +415,24 @@ def menu_kendaraan():
             tampilkan_tabel_kendaraan()
             if not kendaraan_id:
                 tekan_enter()
-                continue
-            id_in = input_angka("  Masukkan ID (angka saja): K")
-            idx   = cari_idx_kendaraan(id_in)
-            if idx == -1:
-                print("  [x] ID tidak ditemukan.")
             else:
-                print(f"  Kendaraan  : {kendaraan_nama[idx]}  ({kendaraan_plat[idx]})")
-                print(f"  Harga Lama : {format_rupiah(kendaraan_harga[idx])}/hari")
-                harga_baru = input_angka("  Harga Baru : Rp ")
-                konfirmasi = input(f"  Ubah ke {format_rupiah(harga_baru)}/hari? (y/n): ").strip().lower()
-                if konfirmasi == "y":
-                    ok, msg = proses_edit_harga(id_in, harga_baru)
-                    print(f"  [v] {msg}" if ok else f"  [x] {msg}")
+                id_in = input_angka("  Masukkan ID (angka saja): K")
+                idx   = cari_idx_kendaraan(id_in)
+                if idx == -1:
+                    print("  [x] ID tidak ditemukan.")
                 else:
-                    print("  [i] Edit dibatalkan.")
+                    print(f"  Kendaraan  : {kendaraan_nama[idx]}  ({kendaraan_plat[idx]})")
+                    print(f"  Harga Lama : {format_rupiah(kendaraan_harga[idx])}/hari")
+                    harga_baru = input_angka("  Harga Baru : Rp ")
+                    konfirmasi = ubah_ke_kecil(hapus_spasi(input(f"  Ubah ke {format_rupiah(harga_baru)}/hari? (y/n): ")))
+                    if konfirmasi == "y":
+                        ok, msg = proses_edit_harga(id_in, harga_baru)
+                        if ok:
+                            print(f"  [v] {msg}")
+                        else:
+                            print(f"  [x] {msg}")
+                    else:
+                        print("  [i] Edit dibatalkan.")
             tekan_enter()
         elif sub == "7":
             print("\n  [ HAPUS KENDARAAN ]")
@@ -367,22 +440,25 @@ def menu_kendaraan():
             if kendaraan_status.count("Tersedia") == 0:
                 print("  [!] Tidak ada kendaraan yang bisa dihapus saat ini.")
                 tekan_enter()
-                continue
-            id_in = input_angka("  Masukkan ID (angka saja): K")
-            idx   = cari_idx_kendaraan(id_in)
-            if idx == -1:
-                print("  [x] ID tidak ditemukan.")
             else:
-                print(f"  Kendaraan : {format_id_k(kendaraan_id[idx])} | {kendaraan_nama[idx]} | {kendaraan_plat[idx]}")
-                konfirmasi = input("  Yakin ingin menghapus? (y/n): ").strip().lower()
-                if konfirmasi == "y":
-                    ok, msg = proses_hapus_kendaraan(id_in)
-                    print(f"  [v] {msg}" if ok else f"  [x] {msg}")
+                id_in = input_angka("  Masukkan ID (angka saja): K")
+                idx   = cari_idx_kendaraan(id_in)
+                if idx == -1:
+                    print("  [x] ID tidak ditemukan.")
                 else:
-                    print("  [i] Penghapusan dibatalkan.")
-            tekan_enter()
+                    print(f"  Kendaraan : {format_id_k(kendaraan_id[idx])} | {kendaraan_nama[idx]} | {kendaraan_plat[idx]}")
+                    konfirmasi = ubah_ke_kecil(hapus_spasi(input("  Yakin ingin menghapus? (y/n): ")))
+                    if konfirmasi == "y":
+                        ok, msg = proses_hapus_kendaraan(id_in)
+                        if ok:
+                            print(f"  [v] {msg}")
+                        else:
+                            print(f"  [x] {msg}")
+                    else:
+                        print("  [i] Penghapusan dibatalkan.")
+                tekan_enter()
         elif sub == "0":
-            break
+            selesai = True
         else:
             print("  [!] Pilihan tidak valid.")
 
@@ -393,13 +469,14 @@ def menu_kendaraan():
 
 def main():
     isi_data_dummy()
+    selesai = False
 
     garis("=", 70)
     print("        SISTEM MANAJEMEN PEMINJAMAN KENDARAAN")
     print("        Dasar Pemrograman  —  Kelompok 2572015/017/054")
     garis("=", 70)
 
-    while True:
+    while not selesai:
         print("\n  ──────  MENU UTAMA  ──────")
         print("  1. Manajemen Data Kendaraan")
         print("  2. Transaksi Pinjam Kendaraan")
@@ -409,7 +486,7 @@ def main():
         print("  6. Laporan & Statistik")
         print("  0. Keluar")
         garis("-", 34)
-        pilihan = input("  >> Pilih Menu: ").strip()
+        pilihan = hapus_spasi(input("  >> Pilih Menu: "))
 
         if pilihan == "1":
             menu_kendaraan()
@@ -419,54 +496,57 @@ def main():
             garis("-", 70)
             
             # Cari transaksi yang masih aktif aja
-            aktif_indices = [i for i in range(len(pinjam_id)) if pinjam_status[i] == "Aktif"]
-            
+            aktif_indices = []
+            for i in range(len(pinjam_id)):
+                if pinjam_status[i] == "Aktif":
+                    aktif_indices = aktif_indices + [i]
+
             if not aktif_indices:
                 print("  [!] Tidak ada peminjaman aktif saat ini.")
                 tekan_enter()
-                continue
-                
-            # Bikin tabel rapi biar enak dilihat
-            print(f"  {'No':<4} {'ID Pinjam':<10} {'Nama Penyewa':<20} {'Kendaraan (ID)':<17} {'Total'}")
-            garis("-", 70)
-            
-            for nomor, idx in enumerate(aktif_indices, start=1):
-                id_p = format_id_p(pinjam_id[idx])
-                nama = pinjam_nama[idx]
-                id_k = format_id_k(pinjam_id_kendaraan[idx])
-                total = format_rupiah(pinjam_total[idx])
-                
-                print(f"  {nomor:<4} {id_p:<10} {nama:<20} {id_k:<17} {total}")
-            garis("-", 70)
-
-            # Input pilih urutan nomor (bukan K)
-            pilihan_kembali = input_angka("  >> Pilih nomor urut transaksi yang dikembalikan: ")
-            
-            if 1 <= pilihan_kembali <= len(aktif_indices):
-                idx = aktif_indices[pilihan_kembali - 1]
-                
-                konfirmasi = input(f"  Yakin selesaikan transaksi {format_id_p(pinjam_id[idx])}? (y/n): ").strip().lower()
-                
-                if konfirmasi == "y":
-                    sukses, pesan = proses_pengembalian(idx)
-                    if sukses:
-                        print(f"  [v] {pesan}")
-                    else:
-                        print(f"  [x] {pesan}")
-                else:
-                    print("  [i] Pengembalian dibatalkan.")
             else:
-                print("  [!] Pilihan tidak valid.")
+                # Bikin tabel rapi biar enak dilihat
+                print("  " + beri_spasi_kanan("No", 4) + " " + beri_spasi_kanan("ID Pinjam", 10) + " " + beri_spasi_kanan("Nama Penyewa", 20) + " " + beri_spasi_kanan("Kendaraan (ID)", 17) + " " + "Total")
+                garis("-", 70)
+                
+                for nomor, idx in enumerate(aktif_indices, start=1):
+                    id_p = format_id_p(pinjam_id[idx])
+                    nama = pinjam_nama[idx]
+                    id_k = format_id_k(pinjam_id_kendaraan[idx])
+                    total = format_rupiah(pinjam_total[idx])
+                    
+                    print("  " + beri_spasi_kanan(str(nomor), 4) + " " + beri_spasi_kanan(id_p, 10) + " " + beri_spasi_kanan(nama, 20) + " " + beri_spasi_kanan(id_k, 17) + " " + total)
+                garis("-", 70)
+
+                # Input pilih urutan nomor (bukan K)
+                pilihan_kembali = input_angka("  >> Pilih nomor urut transaksi yang dikembalikan: ")
+                
+                if 1 <= pilihan_kembali <= len(aktif_indices):
+                    idx = aktif_indices[pilihan_kembali - 1]
+                    
+                    konfirmasi = ubah_ke_kecil(hapus_spasi(input(f"  Yakin selesaikan transaksi {format_id_p(pinjam_id[idx])}? (y/n): ")))
+                    
+                    if konfirmasi == "y":
+                        sukses, pesan = proses_pengembalian(idx)
+                        if sukses:
+                            print(f"  [v] {pesan}")
+                        else:
+                            print(f"  [x] {pesan}")
+                    else:
+                        print("  [i] Pengembalian dibatalkan.")
+                else:
+                    print("  [!] Pilihan tidak valid.")
             tekan_enter()
           
         elif pilihan == "4":
-            while True:
+            lanjut_riwayat = True
+            while lanjut_riwayat:
                 print("\n  == RIWAYAT PEMINJAMAN ==")
                 print("  1. Semua Riwayat")
                 print("  2. Riwayat Aktif")
                 print("  3. Riwayat Selesai")
                 print("  0. Kembali")
-                sub_pilih = input("  >> Pilih: ").strip()
+                sub_pilih = hapus_spasi(input("  >> Pilih: "))
 
                 if sub_pilih == "1":
                     tampilkan_tabel_peminjaman("semua")
@@ -475,7 +555,7 @@ def main():
                 elif sub_pilih == "3":
                     tampilkan_tabel_peminjaman("Selesai")
                 elif sub_pilih == "0":
-                    break
+                    lanjut_riwayat = False
                 else:
                     print("  [!] Pilihan tidak valid.")
                 tekan_enter()
@@ -495,7 +575,7 @@ def main():
             garis("=", 70)
             print("  Terima kasih telah menggunakan sistem ini. Sampai jumpa!")
             garis("=", 70)
-            break
+            selesai = True
             
         else:
             print("  [!] Pilihan menu tidak valid.")
