@@ -226,6 +226,25 @@ def proses_pengembalian(idx_pinjam):
     return True, "Kendaraan berhasil dikembalikan dan siap disewa lagi."
 
 
+def tampilkan_tabel_peminjaman(filter_status="semua"):
+    print("\n--- RIWAYAT PEMINJAMAN ---")
+    found = False
+    print("ID   | ID Kendaraan | Nama Peminjam    | Hari | Total        | Status")
+    garis("-", 70)
+    for i in range(len(pinjam_id)):
+        if filter_status == "semua" or pinjam_status[i] == filter_status:
+            txt_id = format_id_p(pinjam_id[i])
+            txt_id_k = format_id_k(pinjam_id_kendaraan[i])
+            txt_nama = pinjam_nama[i].ljust(16)
+            txt_hari = str(pinjam_hari[i]).rjust(4)
+            txt_total = format_rupiah(pinjam_total[i]).rjust(12)
+            print(f"{txt_id} | {txt_id_k}       | {txt_nama} | {txt_hari} | {txt_total} | {pinjam_status[i]}")
+            found = True
+    if not found:
+        print(" (Tidak ada data)")
+    garis("-", 70)
+
+
 # ============================================================
 #   ISI DATA AWAL (DUMMY)
 # ============================================================
@@ -439,7 +458,28 @@ def main():
             else:
                 print("  [!] Pilihan tidak valid.")
             tekan_enter()
-            
+          
+        elif pilihan == "4":
+            while True:
+                print("\n  == RIWAYAT PEMINJAMAN ==")
+                print("  1. Semua Riwayat")
+                print("  2. Riwayat Aktif")
+                print("  3. Riwayat Selesai")
+                print("  0. Kembali")
+                sub_pilih = input("  >> Pilih: ").strip()
+
+                if sub_pilih == "1":
+                    tampilkan_tabel_peminjaman("semua")
+                elif sub_pilih == "2":
+                    tampilkan_tabel_peminjaman("Aktif")
+                elif sub_pilih == "3":
+                    tampilkan_tabel_peminjaman("Selesai")
+                elif sub_pilih == "0":
+                    break
+                else:
+                    print("  [!] Pilihan tidak valid.")
+                tekan_enter()
+
         elif pilihan == "5":
             print("\n  [ CARI KENDARAAN ]")
             keyword = input_teks("  Masukkan nama/plat/jenis kendaraan: ")
@@ -447,7 +487,7 @@ def main():
             tekan_enter()
             
         # Pilihan 3 udah dihapus dari list pengembangan
-        elif pilihan in ["2", "4", "6"]:
+        elif pilihan in ["2", "6"]:
             print("\n  [!] Fitur ini sedang dalam pengembangan.")
             tekan_enter()
             
