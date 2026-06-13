@@ -50,10 +50,20 @@ def format_rupiah(nominal):
     return "Rp " + hasil
 
 def format_id_k(n):
-    return f"K{str(n).zfill(3)}"
+    if n < 10:
+        return f"K00{n}"
+    elif n < 100:
+        return f"K0{n}"
+    else:
+        return f"K{n}"
 
 def format_id_p(n):
-    return f"P{str(n).zfill(3)}"
+    if n < 10:
+        return f"P00{n}"
+    elif n < 100:
+        return f"P0{n}"
+    else:
+        return f"P{n}"
 
 def cari_idx_kendaraan(id_cari):
     for i in range(len(kendaraan_id)):
