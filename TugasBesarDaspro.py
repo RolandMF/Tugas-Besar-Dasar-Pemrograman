@@ -186,16 +186,16 @@ def cari_kendaraan(keyword):
     garis("=", LEBAR)
     print(f"  HASIL PENCARIAN UNTUK: '{keyword}'")
     garis("-", LEBAR)
-    print(f"  {'ID':<6}  {'Nama':<20}  {'Jenis':<7}  {'Plat':<12}  {'Harga/Hari':>13}   Status")
+    print("  " + beri_spasi_kanan("ID", 6) + "  " + beri_spasi_kanan("Nama", 20) + "  " + beri_spasi_kanan("Jenis", 7) + "  " + beri_spasi_kanan("Plat", 12) + "  " + "Harga/Hari".rjust(13) + "   Status")
     garis("-", LEBAR)
 
     ada_data = False
-    keyword_lower = keyword.lower()
+    keyword_lower = ubah_ke_kecil(keyword)
 
     for i in range(len(kendaraan_id)):
-        if (keyword_lower in kendaraan_nama[i].lower() or 
-            keyword_lower in kendaraan_plat[i].lower() or 
-            keyword_lower in kendaraan_jenis[i].lower()):
+        if (keyword_lower in ubah_ke_kecil(kendaraan_nama[i]) or 
+            keyword_lower in ubah_ke_kecil(kendaraan_plat[i]) or 
+            keyword_lower in ubah_ke_kecil(kendaraan_jenis[i])):
             
             id_str     = format_id_k(kendaraan_id[i])
             nama_str   = kendaraan_nama[i]
@@ -203,15 +203,17 @@ def cari_kendaraan(keyword):
             plat_str   = kendaraan_plat[i]
             harga_str  = format_rupiah(kendaraan_harga[i])
             status_str = kendaraan_status[i]
-            tanda      = "[v]" if status_str == "Tersedia" else "[-]"
+            if status_str == "Tersedia":
+                tanda = "[v]"
+            else:
+                tanda = "[-]"
 
-            print(f"  {id_str:<6}  {nama_str:<20}  {jenis_str:<7}  {plat_str:<12}  {harga_str:>13}  {tanda} {status_str}")
+            print("  " + beri_spasi_kanan(id_str, 6) + "  " + beri_spasi_kanan(nama_str, 20) + "  " + beri_spasi_kanan(jenis_str, 7) + "  " + beri_spasi_kanan(plat_str, 12) + "  " + harga_str.rjust(13) + "  " + tanda + " " + status_str)
             ada_data = True
 
-    if ditemukan == False:
-        print("Data kendaraan tidak ditemukan.")
-
-    cetak_garis()
+    if not ada_data:
+        print(f"  (Tidak ada kendaraan yang cocok dengan kata kunci '{keyword}')")
+    garis("=", LEBAR)
 
 
 # ============================================================
