@@ -500,7 +500,57 @@ def main():
 
         if pilihan == "1":
             menu_kendaraan()
-            
+
+        elif pilihan == "2":
+            print("\n  [ TRANSAKSI PINJAM KENDARAAN ]")
+            ada_tersedia = tampilkan_tabel_kendaraan("Tersedia")
+
+            if not ada_tersedia:
+                print("  [!] Tidak ada kendaraan yang tersedia untuk dipinjam saat ini.")
+                tekan_enter()
+            else:
+                id_in = input_angka("  Masukkan ID Kendaraan (angka saja): K")
+                idx_k = cari_idx_kendaraan(id_in)
+
+                if idx_k == -1:
+                    print("  [x] ID Kendaraan tidak ditemukan.")
+                    tekan_enter()
+                elif kendaraan_status[idx_k] != "Tersedia":
+                    print("  [x] Kendaraan tersebut sedang dipinjam, tidak bisa disewa.")
+                    tekan_enter()
+                else:
+                    nama_p = input_teks("  Nama Peminjam : ")
+                    durasi = input_angka("  Durasi Sewa (hari) : ")
+
+                    while durasi <= 0:
+                        print("  [!] Durasi minimal 1 hari.")
+                        durasi = input_angka("  Durasi Sewa (hari) : ")
+
+                    total = kendaraan_harga[idx_k] * durasi
+
+                    garis("-", 70)
+                    print("  Ringkasan Transaksi :")
+                    print(f"    Kendaraan      : {kendaraan_nama[idx_k]}  ({kendaraan_plat[idx_k]})")
+                    print(f"    Harga/Hari     : {format_rupiah(kendaraan_harga[idx_k])}")
+                    print(f"    Nama Peminjam  : {nama_p}")
+                    print(f"    Durasi         : {durasi} hari")
+                    print(f"    Total Bayar    : {format_rupiah(total)}")
+                    garis("-", 70)
+
+                    konfirmasi = ubah_ke_kecil(hapus_spasi(input("  Konfirmasi peminjaman ini? (y/n): ")))
+
+                    if konfirmasi == "y":
+                        sukses, pesan, total_bayar = proses_catat_peminjaman(id_in, nama_p, durasi)
+                        if sukses:
+                            id_transaksi = format_id_p(counter_pinjam[0] - 1)
+                            print(f"  [v] {pesan}  →  ID Transaksi: {id_transaksi}")
+                            print(f"  [v] Total yang harus dibayar: {format_rupiah(total_bayar)}")
+                        else:
+                            print(f"  [x] Gagal: {pesan}")
+                    else:
+                        print("  [i] Peminjaman dibatalkan.")
+                    tekan_enter()
+
         elif pilihan == "3":
             print("\n  [ TRANSAKSI PENGEMBALIAN KENDARAAN ]")
             garis("-", 70)
@@ -576,8 +626,7 @@ def main():
             cari_kendaraan(keyword)
             tekan_enter()
             
-        # Pilihan 3 udah dihapus dari list pengembangan
-        elif pilihan in ["2", "6"]:
+        elif pilihan == "6":
             print("\n  [!] Fitur ini sedang dalam pengembangan.")
             tekan_enter()
             
