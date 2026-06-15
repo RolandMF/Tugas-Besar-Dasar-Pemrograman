@@ -11,22 +11,20 @@
 #   DEKLARASI ARRAY GLOBAL (PARALLEL ARRAYS)
 # ============================================================
 
-# --- Data Kendaraan ---
-kendaraan_id     = []   # int
-kendaraan_nama   = []   # str
-kendaraan_jenis  = []   # str  (Motor / Mobil / Truk)
-kendaraan_plat   = []   # str
-kendaraan_harga  = []   # int  (per hari)
-kendaraan_status = []   # str  (Tersedia / Dipinjam)
+kendaraan_id     = []  
+kendaraan_nama   = []   
+kendaraan_jenis  = []   
+kendaraan_plat   = []  
+kendaraan_harga  = []   
+kendaraan_status = []   
 
-# --- Data Peminjaman ---
-pinjam_id           = []  # int
-pinjam_id_kendaraan = []  # int  (FK -> kendaraan_id)
-pinjam_nama         = []  # str
-pinjam_hari         = []  # int
-pinjam_total        = []  # int
-pinjam_status       = []  # str  (Aktif / Selesai)
 
+pinjam_id           = []  
+pinjam_id_kendaraan = []  
+pinjam_nama         = [] 
+pinjam_hari         = []  
+pinjam_total        = []  
+pinjam_status       = []  
 counter_kendaraan = [1]
 counter_pinjam    = [1]
 
