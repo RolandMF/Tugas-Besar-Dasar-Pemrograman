@@ -257,12 +257,12 @@ def proses_hapus_kendaraan(id_k):
         return False, "ID Kendaraan tidak ditemukan."
     if kendaraan_status[idx] == "Dipinjam":
         return False, "Kendaraan sedang dipinjam, tidak bisa dihapus."
-    kendaraan_id.pop(idx)
-    kendaraan_nama.pop(idx)
-    kendaraan_jenis.pop(idx)
-    kendaraan_plat.pop(idx)
-    kendaraan_harga.pop(idx)
-    kendaraan_status.pop(idx)
+    kendaraan_id[idx : idx + 1] = []
+    kendaraan_nama[idx : idx + 1] = []
+    kendaraan_jenis[idx : idx + 1] = []
+    kendaraan_plat[idx : idx + 1] = []
+    kendaraan_harga[idx : idx + 1] = []
+    kendaraan_status[idx : idx + 1] = []
     return True, "Kendaraan berhasil dihapus."
 
 def proses_catat_peminjaman(id_k, nama_p, durasi):
@@ -569,13 +569,15 @@ def main():
                 print("  " + beri_spasi_kanan("No", 4) + " " + beri_spasi_kanan("ID Pinjam", 10) + " " + beri_spasi_kanan("Nama Penyewa", 20) + " " + beri_spasi_kanan("Kendaraan (ID)", 17) + " " + "Total")
                 garis("-", 70)
                 
-                for nomor, idx in enumerate(aktif_indices, start=1):
+                nomor = 1
+                for idx in aktif_indices:
                     id_p = format_id_p(pinjam_id[idx])
                     nama = pinjam_nama[idx]
                     id_k = format_id_k(pinjam_id_kendaraan[idx])
                     total = format_rupiah(pinjam_total[idx])
-                    
+
                     print("  " + beri_spasi_kanan(str(nomor), 4) + " " + beri_spasi_kanan(id_p, 10) + " " + beri_spasi_kanan(nama, 20) + " " + beri_spasi_kanan(id_k, 17) + " " + total)
+                    nomor += 1
                 garis("-", 70)
 
                 # Input pilih urutan nomor (bukan K)
