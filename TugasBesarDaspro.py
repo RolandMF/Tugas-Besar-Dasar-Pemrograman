@@ -320,7 +320,175 @@ def tampilkan_tabel_peminjaman(filter_status="semua"):
         print(" (Tidak ada data)")
     garis("-", 70)
 
+# ============================================================
+#   MENU 6 — LAPORAN & STATISTIK
+# ============================================================
 
+def hitung_total_kendaraan():
+    return len(kendaraan_id)
+
+
+def hitung_kendaraan_per_status():
+    total_tersedia = 0
+    total_dipinjam = 0
+    for i in range(len(kendaraan_status)):
+        if kendaraan_status[i] == "Tersedia":
+            total_tersedia = total_tersedia + 1
+        else:
+            total_dipinjam = total_dipinjam + 1
+    return total_tersedia, total_dipinjam
+
+def hitung_rincian_jenis():
+    jenis_unik     = []
+    jenis_jumlah   = []
+    jenis_tersedia = []
+    jenis_dipinjam = []
+
+    for i in range(len(kendaraan_jenis)):
+        jenis = kendaraan_jenis[i]
+        idx   = -1
+        for j in range(len(jenis_unik)):
+            if jenis_unik[j] == jenis:
+                idx = j
+
+        if idx == -1:
+            jenis_unik   = jenis_unik   + [jenis]
+            jenis_jumlah = jenis_jumlah + [1]
+            if kendaraan_status[i] == "Tersedia":
+                jenis_tersedia = jenis_tersedia + [1]
+                jenis_dipinjam = jenis_dipinjam + [0]
+            else:
+                jenis_tersedia = jenis_tersedia + [0]
+                jenis_dipinjam = jenis_dipinjam + [1]
+        else:
+            jenis_jumlah[idx] = jenis_jumlah[idx] + 1
+            if kendaraan_status[i] == "Tersedia":
+                jenis_tersedia[idx] = jenis_tersedia[idx] + 1
+            else:
+                jenis_dipinjam[idx] = jenis_dipinjam[idx] + 1
+
+    return jenis_unik, jenis_jumlah, jenis_tersedia, jenis_dipinjam
+
+def hitung_total_transaksi():
+    jumlah_aktif   = 0
+    jumlah_selesai = 0
+    for i in range(len(pinjam_status)):
+        if pinjam_status[i] == "Aktif":
+            jumlah_aktif = jumlah_aktif + 1
+        else:
+            jumlah_selesai = jumlah_selesai + 1
+    return jumlah_aktif, jumlah_selesai
+
+
+def hitung_pendapatan():
+    pendapatan_selesai = 0
+    pendapatan_aktif   = 0
+    for i in range(len(pinjam_id)):
+        if pinjam_status[i] == "Selesai":
+            pendapatan_selesai = pendapatan_selesai + pinjam_total[i]
+        else:
+            pendapatan_aktif = pendapatan_aktif + pinjam_total[i]
+    return pendapatan_selesai, pendapatan_aktif
+
+
+def cari_kendaraan_populer():
+    id_unik     = []
+    jumlah_sewa = []
+
+    for i in range(len(pinjam_id_kendaraan)):
+        id_k = pinjam_id_kendaraan[i]
+        idx  = -1
+        for j in range(len(id_unik)):
+            if id_unik[j] == id_k:
+                idx = j
+
+        if idx == -1:
+            id_unik     = id_unik     + [id_k]
+            jumlah_sewa = jumlah_sewa + [1]
+        else:
+            jumlah_sewa[idx] = jumlah_sewa[idx] + 1
+
+    if not id_unik:
+        return -1, 0
+
+    idx_max = 0
+    for i in range(1, len(jumlah_sewa)):
+        if jumlah_sewa[i] > jumlah_sewa[idx_max]:
+            idx_max = i
+
+    return id_unik[idx_max], jumlah_sewa[idx_max]
+
+
+def tampilkan_laporan_statistik():
+    LEBAR = 70
+    print()
+    garis("=", LEBAR)
+    print("  LAPORAN & STATISTIK SISTEM")
+    garis("=", LEBAR)
+
+    total_kendaraan = hitung_total_kendaraan()
+    total_tersedia, total_dipinjam = hitung_kendaraan_per_status()
+
+    print("\n  [ DATA KENDARAAN ]")
+    garis("-", LEBAR)
+    print(f"  Total Kendaraan       : {total_kendaraan} unit")
+    print(f"  Kendaraan Tersedia    : {total_tersedia} unit")
+    print(f"  Kendaraan Dipinjam    : {total_dipinjam} unit")
+
+    jenis_unik, jenis_jumlah, jenis_tersedia, jenis_dipinjam = hitung_rincian_jenis()
+
+    print("\n  [ RINCIAN PER JENIS KENDARAAN ]")
+    garis("-", LEBAR)
+    if not jenis_unik:
+        print("  (Belum ada data kendaraan.)")
+    else:
+        print("  " + beri_spasi_kanan("Jenis", 10) + beri_spasi_kanan("Total", 8) +
+              beri_spasi_kanan("Tersedia", 10) + "Dipinjam")
+        garis("-", LEBAR)
+        for i in range(len(jenis_unik)):
+            print("  " + beri_spasi_kanan(jenis_unik[i], 10) +
+                  beri_spasi_kanan(str(jenis_jumlah[i]), 8) +
+                  beri_spasi_kanan(str(jenis_tersedia[i]), 10) +
+                  str(jenis_dipinjam[i]))
+
+    # --- 3. Transaksi peminjaman ---
+    jumlah_aktif, jumlah_selesai = hitung_total_transaksi()
+    total_transaksi = jumlah_aktif + jumlah_selesai
+
+    print("\n  [ TRANSAKSI PEMINJAMAN ]")
+    garis("-", LEBAR)
+    print(f"  Total Transaksi       : {total_transaksi} transaksi")
+    print(f"  Transaksi Aktif       : {jumlah_aktif} transaksi")
+    print(f"  Transaksi Selesai     : {jumlah_selesai} transaksi")
+
+    # --- 4. Pendapatan ---
+    pendapatan_selesai, pendapatan_aktif = hitung_pendapatan()
+    total_pendapatan = pendapatan_selesai + pendapatan_aktif
+
+    print("\n  [ PENDAPATAN ]")
+    garis("-", LEBAR)
+    print(f"  Pendapatan (Selesai)      : {format_rupiah(pendapatan_selesai)}")
+    print(f"  Potensi Pendapatan (Aktif): {format_rupiah(pendapatan_aktif)}")
+    print(f"  Total Keseluruhan         : {format_rupiah(total_pendapatan)}")
+
+    # --- 5. Kendaraan paling populer ---
+    print("\n  [ KENDARAAN PALING POPULER ]")
+    garis("-", LEBAR)
+    id_populer, jumlah_sewa = cari_kendaraan_populer()
+    if id_populer == -1:
+        print("  (Belum ada data peminjaman.)")
+    else:
+        idx_k = cari_idx_kendaraan(id_populer)
+        if idx_k == -1:
+            print("  (Data kendaraan tidak ditemukan.)")
+        else:
+            print(f"  ID          : {format_id_k(id_populer)}")
+            print(f"  Nama        : {kendaraan_nama[idx_k]}")
+            print(f"  Plat        : {kendaraan_plat[idx_k]}")
+            print(f"  Jenis       : {kendaraan_jenis[idx_k]}")
+            print(f"  Jumlah Sewa : {jumlah_sewa} kali")
+
+    garis("=", LEBAR)
 # ============================================================
 #   ISI DATA AWAL (DUMMY)
 # ============================================================
@@ -630,7 +798,7 @@ def main():
             tekan_enter()
             
         elif pilihan == "6":
-            print("\n  [!] Fitur ini sedang dalam pengembangan.")
+            tampilkan_laporan_statistik()
             tekan_enter()
             
         elif pilihan == "0":
