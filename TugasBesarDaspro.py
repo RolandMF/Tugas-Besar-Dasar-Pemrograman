@@ -252,17 +252,20 @@ def proses_edit_harga(id_k, harga_baru):
     return True, "Harga berhasil diperbarui."
 
 def proses_hapus_kendaraan(id_k):
+    global kendaraan_id, kendaraan_nama, kendaraan_jenis, kendaraan_plat, kendaraan_harga, kendaraan_status
     idx = cari_idx_kendaraan(id_k)
     if idx == -1:
         return False, "ID Kendaraan tidak ditemukan."
     if kendaraan_status[idx] == "Dipinjam":
         return False, "Kendaraan sedang dipinjam, tidak bisa dihapus."
-    kendaraan_id.pop(idx)
-    kendaraan_nama.pop(idx)
-    kendaraan_jenis.pop(idx)
-    kendaraan_plat.pop(idx)
-    kendaraan_harga.pop(idx)
-    kendaraan_status.pop(idx)
+
+    kendaraan_id     = kendaraan_id[:idx]     + kendaraan_id[idx + 1:]
+    kendaraan_nama   = kendaraan_nama[:idx]   + kendaraan_nama[idx + 1:]
+    kendaraan_jenis  = kendaraan_jenis[:idx]  + kendaraan_jenis[idx + 1:]
+    kendaraan_plat   = kendaraan_plat[:idx]   + kendaraan_plat[idx + 1:]
+    kendaraan_harga  = kendaraan_harga[:idx]  + kendaraan_harga[idx + 1:]
+    kendaraan_status = kendaraan_status[:idx] + kendaraan_status[idx + 1:]
+
     return True, "Kendaraan berhasil dihapus."
 
 def proses_catat_peminjaman(id_k, nama_p, durasi):
