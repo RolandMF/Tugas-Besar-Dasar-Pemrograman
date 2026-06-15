@@ -288,10 +288,8 @@ def proses_pengembalian(idx_pinjam):
     if pinjam_status[idx_pinjam] == "Selesai":
         return False, "Transaksi ini sudah selesai."
         
-    # Ubah status peminjaman jadi Selesai
     pinjam_status[idx_pinjam] = "Selesai"
     
-    # Balikin status kendaraan jadi Tersedia lagi
     id_k = pinjam_id_kendaraan[idx_pinjam]
     idx_k = cari_idx_kendaraan(id_k)
     if idx_k != -1:
@@ -449,7 +447,6 @@ def tampilkan_laporan_statistik():
                   beri_spasi_kanan(str(jenis_tersedia[i]), 10) +
                   str(jenis_dipinjam[i]))
 
-    # --- 3. Transaksi peminjaman ---
     jumlah_aktif, jumlah_selesai = hitung_total_transaksi()
     total_transaksi = jumlah_aktif + jumlah_selesai
 
@@ -459,7 +456,7 @@ def tampilkan_laporan_statistik():
     print(f"  Transaksi Aktif       : {jumlah_aktif} transaksi")
     print(f"  Transaksi Selesai     : {jumlah_selesai} transaksi")
 
-    # --- 4. Pendapatan ---
+
     pendapatan_selesai, pendapatan_aktif = hitung_pendapatan()
     total_pendapatan = pendapatan_selesai + pendapatan_aktif
 
@@ -469,7 +466,6 @@ def tampilkan_laporan_statistik():
     print(f"  Potensi Pendapatan (Aktif): {format_rupiah(pendapatan_aktif)}")
     print(f"  Total Keseluruhan         : {format_rupiah(total_pendapatan)}")
 
-    # --- 5. Kendaraan paling populer ---
     print("\n  [ KENDARAAN PALING POPULER ]")
     garis("-", LEBAR)
     id_populer, jumlah_sewa = cari_kendaraan_populer()
