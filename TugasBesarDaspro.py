@@ -144,41 +144,81 @@ def tekan_enter():
 #   FUNGSI UTILITAS TAMPIL & PENCARIAN
 # ============================================================
 
+
+def beri_spasi_kiri(teks, lebar):
+    while len(teks) < lebar:
+        teks = " " + teks
+    return teks
+
 def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
+
+
     judul = "SEMUA KENDARAAN"
     if filter_status != "semua":
-        judul = f"KENDARAAN — {ubah_ke_besar(filter_status)}"
-    if filter_jenis:
-        judul += f" | JENIS: {ubah_ke_besar(filter_jenis)}"
+        judul = "KENDARAAN — " + ubah_ke_besar(filter_status)
+    if filter_jenis != None:
+        judul = judul + " | JENIS: " + ubah_ke_besar(filter_jenis)
 
     LEBAR = 70
+
+    # --- Cetak header tabel ---
     print()
     garis("=", LEBAR)
-    print(f"  {judul}")
-    garis("-", LEBAR)
-    print("  " + beri_spasi_kanan("ID", 6) + "  " + beri_spasi_kanan("Nama", 20) + "  " + beri_spasi_kanan("Jenis", 7) + "  " + beri_spasi_kanan("Plat", 12) + "  " + "Harga/Hari".rjust(13) + "   Status")
+    print("  " + judul)
     garis("-", LEBAR)
 
+    header_id     = beri_spasi_kanan("ID", 6)
+    header_nama   = beri_spasi_kanan("Nama", 20)
+    header_jenis  = beri_spasi_kanan("Jenis", 7)
+    header_plat   = beri_spasi_kanan("Plat", 12)
+    header_harga  = beri_spasi_kiri("Harga/Hari", 13)
+    header_status = "Status"
+
+    print("  " + header_id + "  " + header_nama + "  " + header_jenis + "  " + header_plat + "  " + header_harga + "   " + header_status)
+    garis("-", LEBAR)
+
+    # --- Cetak isi tabel ---
     ada_data = False
-    for i in range(len(kendaraan_id)):
+
+    for i in range(0, len(kendaraan_id), 1):
+
+        # Baris ini lolos gilter atau tidak
         cocok_status = filter_status == "semua" or kendaraan_status[i] == filter_status
-        cocok_jenis  = not filter_jenis or ubah_ke_kecil(kendaraan_jenis[i]) == ubah_ke_kecil(filter_jenis)
+        cocok_jenis  = filter_jenis == None or ubah_ke_kecil(kendaraan_jenis[i]) == ubah_ke_kecil(filter_jenis)
 
         if cocok_status and cocok_jenis:
+
+            # Ambil data mentah
             id_str     = format_id_k(kendaraan_id[i])
             nama_str   = kendaraan_nama[i]
             jenis_str  = kendaraan_jenis[i]
             plat_str   = kendaraan_plat[i]
             harga_str  = format_rupiah(kendaraan_harga[i])
             status_str = kendaraan_status[i]
-            tanda      = "[v]" if status_str == "Tersedia" else "[-]"
 
-            print("  " + beri_spasi_kanan(id_str, 6) + "  " + beri_spasi_kanan(nama_str, 20) + "  " + beri_spasi_kanan(jenis_str, 7) + "  " + beri_spasi_kanan(plat_str, 12) + "  " + harga_str.rjust(13) + "  " + tanda + " " + status_str)
+            # Tentukan tanda status
+            if status_str == "Tersedia":
+                tanda = "[v]"
+            else:
+                tanda = "[-]"
+
+            # Format tiap kolom supaya lebar konsisten
+            kolom_id     = beri_spasi_kanan(id_str, 6)
+            kolom_nama   = beri_spasi_kanan(nama_str, 20)
+            kolom_jenis  = beri_spasi_kanan(jenis_str, 7)
+            kolom_plat   = beri_spasi_kanan(plat_str, 12)
+            kolom_harga  = beri_spasi_kiri(harga_str, 13)   # right-align harga
+
+            # Gabungkan jadi satu baris
+            baris = "  " + kolom_id + "  " + kolom_nama + "  " + kolom_jenis + "  " + kolom_plat + "  " + kolom_harga + "  " + tanda + " " + status_str
+            print(baris)
             ada_data = True
+
 
     if not ada_data:
         print("  (Tidak ada data yang sesuai.)")
     garis("=", LEBAR)
+
     return ada_data
 
 def tampilkan_tabel_peminjaman(filter_status="semua"):
@@ -262,10 +302,10 @@ def proses_pengembalian(idx_pinjam):
     if pinjam_status[idx_pinjam] == "Selesai":
         return False, "Transaksi ini sudah selesai."
         
-    # Ubah status peminjaman jadi Selesai
+
     pinjam_status[idx_pinjam] = "Selesai"
     
-    # Balikin status kendaraan jadi Tersedia lagi
+
     id_k = pinjam_id_kendaraan[idx_pinjam]
     idx_k = cari_idx_kendaraan(id_k)
     if idx_k != -1:
@@ -333,7 +373,7 @@ def main():
     garis("=", 70)
 
     while not selesai:
-        print("\n  ──────  MENU UTAMA  ──────")
+        print("  ──────  MENU UTAMA  ──────")
         print("  1. Manajemen Data Kendaraan")
         print("  2. Transaksi Pinjam Kendaraan")
         print("  3. Transaksi Kembalikan Kendaraan")
@@ -350,7 +390,6 @@ def main():
         if pilihan == "1":
             selesai_k = False
             while not selesai_k:
-                print("\n")
                 garis("=", 44)
                 print("      MANAJEMEN DATA KENDARAAN")
                 garis("=", 44)
@@ -380,7 +419,7 @@ def main():
                     tekan_enter()
 
                 elif sub == "4":
-                    print("\n  [ FILTER BERDASARKAN JENIS ]")
+                    print(" [ FILTER BERDASARKAN JENIS ]")
                     print("  Jenis :  1) Motor   2) Mobil   3) Truk")
                     jenis_cari = None
                     while jenis_cari is None:
@@ -393,7 +432,7 @@ def main():
                     tekan_enter()
 
                 elif sub == "5":
-                    print("\n  [ TAMBAH KENDARAAN BARU ]")
+                    print(" [ TAMBAH KENDARAAN BARU ]")
                     garis("-", 44)
                     nama  = input_teks("  Nama Kendaraan  : ")
                     print("  Jenis :  1) Motor   2) Mobil   3) Truk")
