@@ -549,16 +549,13 @@ def main():
             else:
                 print("  " + beri_spasi_kanan("No", 4) + " " + beri_spasi_kanan("ID Pinjam", 10) + " " + beri_spasi_kanan("Nama Penyewa", 20) + " " + beri_spasi_kanan("Kendaraan (ID)", 17) + " " + "Total")
                 garis("-", 70)
-                
-                nomor = 1
-                for idx in aktif_indices:
-                    id_p = format_id_p(pinjam_id[idx])
-                    nama = pinjam_nama[idx]
-                    id_k = format_id_k(pinjam_id_kendaraan[idx])
-                    total = format_rupiah(pinjam_total[idx])
 
+                for nomor, idx in enumerate(aktif_indices, start=1):
+                    id_p  = format_id_p(pinjam_id[idx])
+                    nama  = pinjam_nama[idx]
+                    id_k  = format_id_k(pinjam_id_kendaraan[idx])
+                    total = format_rupiah(pinjam_total[idx])
                     print("  " + beri_spasi_kanan(str(nomor), 4) + " " + beri_spasi_kanan(id_p, 10) + " " + beri_spasi_kanan(nama, 20) + " " + beri_spasi_kanan(id_k, 17) + " " + total)
-                    nomor += 1
                 garis("-", 70)
 
                 pilihan_kembali = input_angka("  >> Pilih nomor urut transaksi yang dikembalikan: ")
@@ -605,9 +602,6 @@ def main():
         # ============================================================
         #   MENU 5 — CARI KENDARAAN
         # ============================================================
-        # ============================================================
-        #   MENU 5 — CARI KENDARAAN
-        # ============================================================
         elif pilihan == "5":
             print("\n  [ CARI KENDARAAN ]")
             keyword       = input_teks("  Masukkan nama/plat/jenis kendaraan: ")
@@ -618,7 +612,11 @@ def main():
             garis("=", LEBAR)
             print(f"  HASIL PENCARIAN UNTUK: '{keyword}'")
             garis("-", LEBAR)
-            print("  " + beri_spasi_kanan("ID", 6) + "  " + beri_spasi_kanan("Nama", 20) + "  " + beri_spasi_kanan("Jenis", 7) + "  " + beri_spasi_kanan("Plat", 12) + "  " + "Harga/Hari".rjust(13) + "   Status")
+            print("  " + beri_spasi_kanan("ID", 6) + "  " +
+                  beri_spasi_kanan("Nama", 20) + "  " +
+                  beri_spasi_kanan("Jenis", 7) + "  " +
+                  beri_spasi_kanan("Plat", 12) + "  " +
+                  beri_spasi_kanan("Harga/Hari", 13) + "  Status")
             garis("-", LEBAR)
 
             ada_data = False
@@ -653,7 +651,6 @@ def main():
             print("  LAPORAN & STATISTIK SISTEM")
             garis("=", LEBAR)
 
-            # --- Data Kendaraan ---
             total_kendaraan  = len(kendaraan_id)
             total_tersedia   = 0
             total_dipinjam_k = 0
