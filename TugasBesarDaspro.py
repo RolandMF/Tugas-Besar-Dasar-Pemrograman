@@ -145,10 +145,6 @@ def tekan_enter():
 # ============================================================
 
 
-def beri_spasi_kiri(teks, lebar):
-    while len(teks) < lebar:
-        teks = " " + teks
-    return teks
 
 def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
 
@@ -171,7 +167,7 @@ def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
     header_nama   = beri_spasi_kanan("Nama", 20)
     header_jenis  = beri_spasi_kanan("Jenis", 7)
     header_plat   = beri_spasi_kanan("Plat", 12)
-    header_harga  = beri_spasi_kiri("Harga/Hari", 13)
+    header_harga  = beri_spasi_kanan("Harga/Hari", 13)
     header_status = "Status"
 
     print("  " + header_id + "  " + header_nama + "  " + header_jenis + "  " + header_plat + "  " + header_harga + "   " + header_status)
@@ -207,7 +203,7 @@ def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
             kolom_nama   = beri_spasi_kanan(nama_str, 20)
             kolom_jenis  = beri_spasi_kanan(jenis_str, 7)
             kolom_plat   = beri_spasi_kanan(plat_str, 12)
-            kolom_harga  = beri_spasi_kiri(harga_str, 13)   # right-align harga
+            kolom_harga  = beri_spasi_kanan(harga_str, 13)   
 
             # Gabungkan jadi satu baris
             baris = "  " + kolom_id + "  " + kolom_nama + "  " + kolom_jenis + "  " + kolom_plat + "  " + kolom_harga + "  " + tanda + " " + status_str
