@@ -157,7 +157,6 @@ def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
 
     LEBAR = 70
 
-    # --- Cetak header tabel ---
     print()
     garis("=", LEBAR)
     print("  " + judul)
@@ -173,7 +172,6 @@ def tampilkan_tabel_kendaraan(filter_status="semua", filter_jenis=None):
     print("  " + header_id + "  " + header_nama + "  " + header_jenis + "  " + header_plat + "  " + header_harga + "   " + header_status)
     garis("-", LEBAR)
 
-    # --- Cetak isi tabel ---
     ada_data = False
 
     for i in range(0, len(kendaraan_id), 1):
@@ -358,8 +356,26 @@ def isi_data_dummy():
 # ============================================================
 #   MENU UTAMA
 # ============================================================
+# kamus data global:
+#kendaraan_id : var untuk menyimpan id unik kendaraan (integer)
+#kendaraan_nama : var untuk menyimpan nama kendaraan (string)
+#kendaraan_jenis : var untuk menyimpan jenis kendaraan: Motor/Mobil/Truk (string)
+#kendaraan_plat : var untuk menyimpan nomor plat kendaraan (string)
+#kendaraan_harga : var untuk menyimpan harga sewa kendaraan per hari (integer)
+#kendaraan_status : var untuk menyimpan status kendaraan: Tersedia/Dipinjam (string)
+#pinjam_id : var untuk menyimpan id unik transaksi peminjaman (integer)
+#pinjam_id_kendaraan : var untuk menyimpan id kendaraan yang dipinjam (integer)
+#pinjam_nama : var untuk menyimpan nama peminjam (string)
+#pinjam_hari : var untuk menyimpan lama peminjaman dalam hari (integer)
+#pinjam_total : var untuk menyimpan total biaya peminjaman (integer)
+#pinjam_status : var untuk menyimpan status transaksi: Aktif/Selesai (string)
+#counter_kendaraan : var untuk menyimpan nomor urut id kendaraan berikutnya (integer)
+#counter_pinjam : var untuk menyimpan nomor urut id transaksi berikutnya (integer)
 
 def main():
+    #kamus data:
+        #pilihan : var untuk menyimpan pilihan menu utama yang diketik pengguna (string)
+        #selesai : var penanda untuk menghentikan perulangan menu utama saat program akan keluar (boolean)
     isi_data_dummy()
     selesai = False
 
@@ -383,6 +399,19 @@ def main():
         # ============================================================
         #   MENU 1 — MANAJEMEN DATA KENDARAAN
         # ============================================================
+        #kamus data:
+        #sub : var untuk menyimpan pilihan submenu kendaraan (string)
+        #jenis_cari : var untuk menyimpan jenis kendaraan yang dipilih sebagai filter (string)
+        #nama, #jenis, #plat, #harga : var untuk menyimpan data kendaraan baru yang diinput pengguna (string/string/string/integer)
+        #id_in : var untuk menyimpan id kendaraan yang diinput pengguna (integer)
+        #idx : var untuk menyimpan posisi data kendaraan pada array, hasil pencarian id (integer)
+        #harga_baru : var untuk menyimpan harga sewa baru yang diinput pengguna (integer)
+        #konfirmasi : var untuk menyimpan jawaban konfirmasi (y/n) dari pengguna (string)
+        #sukses : var penanda keberhasilan proses edit atau hapus kendaraan (boolean)
+        #msg : var untuk menyimpan pesan hasil proses edit atau hapus kendaraan (string)
+        #id_baru : var untuk menyimpan id kendaraan baru yang sudah diformat untuk ditampilkan ke pengguna (string)
+        #pj : var untuk menyimpan pilihan jenis kendaraan saat filter atau input kendaraan baru (string)
+
         if pilihan == "1":
             selesai_k = False
             while not selesai_k:
@@ -516,6 +545,23 @@ def main():
         # ============================================================
         #   MENU 2 — TRANSAKSI PINJAM KENDARAAN
         # ============================================================
+        #sub : var untuk menyimpan pilihan submenu kendaraan (string)
+        #jenis_cari : var untuk menyimpan jenis kendaraan yang dipilih sebagai filter (string)
+        #nama, #jenis, #plat, #harga : var untuk menyimpan data kendaraan baru yang diinput pengguna (string/string/string/integer)
+        #id_in : var untuk menyimpan id kendaraan yang diinput pengguna (integer)
+        #idx : var untuk menyimpan posisi data kendaraan pada array, hasil pencarian id (integer)
+        #harga_baru : var untuk menyimpan harga sewa baru yang diinput pengguna (integer)
+        #konfirmasi : var untuk menyimpan jawaban konfirmasi (y/n) dari pengguna (string)
+        #sukses : var penanda keberhasilan proses edit atau hapus kendaraan (boolean)
+        #msg : var untuk menyimpan pesan hasil proses edit atau hapus kendaraan (string)
+        #total_bayar : var untuk menyimpan total bayar yang dihitung (integer)
+        #id_k : var untuk menyimpan id kendaraan yang dipinjam pada transaksi yang dicatat, diambil dari array pinjam_id_kendaraan berdasarkan idx (integer)
+        #nama_p : var untuk menyimpan nama peminjam pada transaksi yang dicatat, diambil dari array pinjam_nama berdasarkan idx (string)
+        #durasi : var untuk menyimpan durasi sewa dalam hari pada transaksi yang dicatat, diambil dari array pinjam_hari berdasarkan idx (integer)
+        #total : var untuk menyimpan total biaya sewa pada transaksi yang dicatat, diambil dari array pinjam_total berdasarkan idx (integer)
+        #id_transaksi : var untuk menyimpan id transaksi yang baru dicatat dan diformat untuk ditampilkan ke pengguna (string)
+        #ada_tersedia : var penanda untuk mengecek apakah ada kendaraan yang tersedia untuk dipinjam saat ini (boolean)
+
         elif pilihan == "2":
             print("\n  [ TRANSAKSI PINJAM KENDARAAN ]")
             ada_tersedia = tampilkan_tabel_kendaraan("Tersedia")
@@ -569,6 +615,15 @@ def main():
         # ============================================================
         #   MENU 3 — TRANSAKSI KEMBALIKAN KENDARAAN
         # ============================================================
+        #kamus data:
+        #aktif_indices : var untuk menyimpan kumpulan indeks transaksi yang masih berstatus Aktif (array of integer)
+        #pilihan_kembali : var untuk menyimpan nomor urut transaksi yang dipilih untuk dikembalikan (integer)
+        #idx : var untuk menyimpan posisi transaksi asli pada array, hasil pemetaan nomor urut (integer)
+        #konfirmasi : var untuk menyimpan jawaban konfirmasi (y/n) dari pengguna (string)
+        #sukses : var penanda keberhasilan proses pengembalian kendaraan (boolean)
+        #pesan : var untuk menyimpan pesan hasil proses pengembalian kendaraan (string) 
+        #id_k : var untuk menyimpan id kendaraan yang dikembalikan pada transaksi yang diproses, diambil dari array pinjam_id_kendaraan berdasarkan idx (integer)
+        #id_p : var untuk menyimpan id transaksi yang dikembalikan pada transaksi yang diproses, diambil dari array pinjam_id berdasarkan idx (integer)
         elif pilihan == "3":
             print("\n  [ TRANSAKSI PENGEMBALIAN KENDARAAN ]")
             garis("-", 70)
@@ -612,6 +667,10 @@ def main():
         # ============================================================
         #   MENU 4 — RIWAYAT PEMINJAMAN
         # ============================================================
+        #kamus data:
+        #sub_pilih : var untuk menyimpan pilihan submenu riwayat (string)
+        #lanjut_riwayat : var penanda untuk menghentikan submenu riwayat (boolean)
+
         elif pilihan == "4":
             lanjut_riwayat = True
             while lanjut_riwayat:
@@ -637,6 +696,13 @@ def main():
         # ============================================================
         #   MENU 5 — CARI KENDARAAN
         # ============================================================
+        #kamus data:
+        #keyword : var untuk menyimpan kata kunci pencarian (nama/plat/jenis) (string)
+        #keyword_lower : var untuk menyimpan kata kunci pencarian dalam huruf kecil (string)
+        #ada_data : var penanda apakah ada kendaraan yang cocok dengan kata kunci (boolean)
+        #kendaraan_id[i], kendaraan_nama[i], kendaraan_jenis[i], kendaraan_plat[i], kendaraan_harga[i], kendaraan_status[i] : data kendaraan yang dicocokkan dengan kata kunci pada iterasi ke-i (integer/string/string/string/integer/string)
+        #id_str, nama_str, jenis_str, plat_str, harga_str, status_str : var untuk menyimpan data kendaraan yang sudah diformat untuk ditampilkan ke pengguna pada iterasi ke-i (string/string/string/string/string/string)
+        #tanda : var untuk menyimpan simbol status [v] untuk Tersedia dan
         elif pilihan == "5":
             print("\n  [ CARI KENDARAAN ]")
             keyword       = input_teks("  Masukkan nama/plat/jenis kendaraan: ")
@@ -679,6 +745,23 @@ def main():
         # ============================================================
         #   MENU 6 — LAPORAN & STATISTIK
         # ============================================================
+        #kamus data:
+        #total_kendaraan : var untuk menyimpan jumlah seluruh kendaraan (integer)
+        #total_tersedia : var untuk menyimpan jumlah kendaraan berstatus Tersedia (integer)
+        #total_dipinjam_k : var untuk menyimpan jumlah kendaraan berstatus Dipinjam (integer)
+        #jenis_unik : var untuk menyimpan daftar jenis kendaraan yang berbeda-beda (array of string)
+        #jenis_jumlah : var untuk menyimpan jumlah kendaraan pada setiap jenis (array of integer)
+        #jumlah_aktif : var untuk menyimpan jumlah transaksi berstatus Aktif (integer)
+        #jumlah_selesai : var untuk menyimpan jumlah transaksi berstatus Selesai (integer)
+        #total_pendapatan : var untuk menyimpan total keseluruhan pendapatan (integer)
+        #id_populer : var untuk menyimpan id kendaraan yang paling sering disewa (integer)
+        #jumlah_sewa : var untuk menyimpan jumlah sewa dari kendaraan yang paling sering disewa (integer)
+        #id_unik_pop : var untuk menyimpan daftar id kendaraan yang disewa (array of integer)
+        #total_kendaraan_jenis : var untuk menyimpan jenis kendaraan berdasarkan id kendaraan yang disewa (array of string)
+        #total_pendapatan_jenis : var untuk menyimpan total pendapatan berdasarkan jenis kendaraan yang disewa (array of integer)
+        #idx : var untuk menyimpan posisi kendaraan pada array, hasil pencarian id kendaraan yang disewa (integer)
+        #total_pendapatan_jenis[idx] : var untuk menyimpan total pendapatan berdasarkan jenis kendaraan yang disewa pada posisi idx (integer)
+        #jenis : var untuk menyimpan jenis kendaraan berdasarkan id kendaraan yang disewa pada posisi idx (string)
         elif pilihan == "6":
             LEBAR = 70
             print()
@@ -701,7 +784,6 @@ def main():
             print(f"  Kendaraan Tersedia    : {total_tersedia} unit")
             print(f"  Kendaraan Dipinjam    : {total_dipinjam_k} unit")
 
-            # --- Rincian per jenis ---
             jenis_unik     = []
             jenis_jumlah   = []
             jenis_tersedia = []
@@ -744,7 +826,6 @@ def main():
                           beri_spasi_kanan(str(jenis_tersedia[i]), 10) +
                           str(jenis_dipinjam[i]))
 
-            # --- Transaksi ---
             jumlah_aktif   = 0
             jumlah_selesai = 0
             for i in range(len(pinjam_status)):
@@ -760,7 +841,6 @@ def main():
             print(f"  Transaksi Aktif       : {jumlah_aktif} transaksi")
             print(f"  Transaksi Selesai     : {jumlah_selesai} transaksi")
 
-            # --- Pendapatan ---
             pendapatan_selesai = 0
             pendapatan_aktif   = 0
             for i in range(len(pinjam_id)):
@@ -776,7 +856,6 @@ def main():
             print(f"  Potensi Pendapatan (Aktif): {format_rupiah(pendapatan_aktif)}")
             print(f"  Total Keseluruhan         : {format_rupiah(total_pendapatan)}")
 
-            # --- Kendaraan paling populer ---
             id_unik_pop = []
             jumlah_sewa = []
 
@@ -819,6 +898,8 @@ def main():
         # ============================================================
         #   MENU 0 — KELUAR
         # ============================================================
+        #kamus data:
+        #selesai : var diubah menjadi True agar perulangan menu utama berhenti dan program selesai (boolean)
         elif pilihan == "0":
             garis("=", 70)
             print("  Terima kasih telah menggunakan sistem ini. Sampai jumpa!")
